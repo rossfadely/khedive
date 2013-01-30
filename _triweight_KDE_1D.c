@@ -11,6 +11,8 @@
 //
 //
 
+#include <math.h>
+
 void triweight_KDE_1D(long Nsamp, double *scaledsamples, double h,
                       double *pdf) {
 
@@ -22,9 +24,9 @@ void triweight_KDE_1D(long Nsamp, double *scaledsamples, double h,
     for (i=0; i<Nsamp; i++) {
         pdf[i] = 0.0;
         for (j=0; j<Nsamp; j++) {
-            u = scaledsamples[i] - scaledsamples[j]
-            // Double check that i!=j is not necessary
-            if (u>-1.0 && u<1.0) {
+            u = scaledsamples[i] - scaledsamples[j];
+            // Double check that i!=j is necessary
+            if (i!=j && u>-1.0 && u<1.0) {
                 pdf[i] += pow((1.0 - u * u),3.0);
             }
         }
