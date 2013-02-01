@@ -5,7 +5,6 @@ import ctypes as ct
 # TO-DO: - add more kernels
 #        - add FFT tricks
 #        - automatic bandwidth estimation
-#        - MAKE C TYPES MATCH ASSIGNS
 
 class KDE(object):
     """
@@ -22,7 +21,7 @@ class KDE(object):
         self.bandwidths = bandwidths
 
         if samples==None:
-            print 'No samples given, running demo'
+            print '\nNo samples given, running demo'
             self.run_demo()
         else:
             self.run_estimator()
@@ -33,19 +32,35 @@ class KDE(object):
         s[:500] = s[:500] * 0.5 + 0.3
         self.samples = np.sort(s,axis=0)
 
-        self.KDEtypes = 'triweight'
+        self.KDEtypes = 'triangular'
         self.bandwidths = 0.3
-
         self.run_estimator()
 
         fig = pl.figure()
         pl.hist(self.samples,40,alpha=0.2,normed=True)
-        pl.plot(self.samples,self.pdf,'r',lw=2,label='triweight')
+        pl.plot(self.samples,self.pdf,'r',lw=2,label=self.KDEtypes)
         pl.show()
-        print 'Enter filename for figure, or return to exit'
+        print '\nEnter filename to save figure, or return to exit'
         name = raw_input()
         if len(name)!=0:
             fig.savefig(name)
+
+
+        s = np.random.randn(2000,2)
+        s[:500,0] = s[:500,0] * 0.5 + 0.3
+        s[:500,1] = s[:500,1] * 0.3 + 0.5
+        s[500:,0] = s[500:,0] - 1.0
+        s[500:,1] = s[500:,1] - 0.5
+        self.samples = s
+
+        self.KDEtypes = 'triangular'
+        self.bandwidths = 0.3
+        self.run_estimator()
+
+        fig = pl.figure()
+        pl.plot(self.samples[:,0],self.samples[:,1],'ok',
+                alpha=0.2,label=self.KDEtypes)
+        pl.show()
 
     def run_estimator(self):
 
@@ -95,8 +110,15 @@ class KDE(object):
         """
         Convert strings to ints that represent kernels
         """
-        KDEnames = np.array(['triweight'])
-        KDEints  = np.array([0])
+        KDEnames = np.array(['gaussian',
+                             'triangular',
+                             'epanechnikov',
+                             'biweight',
+                             'triweight',
+                             'tricube',
+                             'cosine',
+                             'uniform'])
+        KDEints  = np.array([0,1,2,3,4,5,6,7])
         
         if isinstance(self.KDEtypes,str):
             self.KDEtypes = np.array([self.KDEtypes])

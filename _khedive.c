@@ -43,6 +43,7 @@ double KDE_1D(long Nsamp,long Ndim,long i,long j,long KDEtype,double h, double *
     
     long k, ind, idx;
     double u, pdf=0.0;
+    const double pi = 3.14159265359;
     
     ind = i * Ndim + j; // index of point being estimated
     
@@ -56,10 +57,54 @@ double KDE_1D(long Nsamp,long Ndim,long i,long j,long KDEtype,double h, double *
         
         // begin kernel types
         //
-        // Triweight
+        // Gaussian
         if (KDEtype==0) {
+            if (ind!=idx) {
+                pdf += exp(-0.5 * u * u) / sqrt(2. * pi);
+            }
+        }
+        // Triangular
+        if (KDEtype==1) {
+            // why is abs() all screwy?
+            if (ind!=idx && u>-1.0 && u<1.0) {
+                pdf += 1.0 - sqrt(u * u);
+            }
+        }
+        // Epanechnikov
+        if (KDEtype==2) {
+            if (ind!=idx && u>-1.0 && u<1.0) {
+                pdf += 3. / 4. * (1.0 - u * u);
+            }
+        }
+        // Biweight
+        if (KDEtype==3) {
+            if (ind!=idx && u>-1.0 && u<1.0) {
+                pdf += 15. / 16. * pow((1.0 - u * u),2.0);
+            }
+        }
+        // Triweight
+        if (KDEtype==4) {
             if (ind!=idx && u>-1.0 && u<1.0) {
                 pdf += 35. / 32. * pow((1.0 - u * u),3.0);
+            }
+        }
+        // Tricube
+        if (KDEtype==5) {
+            // why is abs() all screwy?
+            if (ind!=idx && u>-1.0 && u<1.0) {
+                pdf += 70. / 81. * pow((1.0 - sqrt(pow(u,6.0))),3.0);
+            }
+        }
+        // Cosine
+        if (KDEtype==6) {
+            if (ind!=idx && u>-1.0 && u<1.0) {
+                pdf += 0.25 * pi * cos(0.5 * pi * u);
+            }
+        }
+        // Uniform
+        if (KDEtype==7) {
+            if (ind!=idx && u>-1.0 && u<1.0) {
+                pdf += 0.5;
             }
         }
     }
