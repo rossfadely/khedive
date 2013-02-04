@@ -32,7 +32,7 @@ class KDE(object):
         s[:500] = s[:500] * 0.5 + 0.3
         self.samples = np.sort(s,axis=0)
 
-        self.KDEtypes = 'triangular'
+        self.KDEtypes = 'triweight'
         self.bandwidths = 0.3
         self.run_estimator()
 
@@ -53,7 +53,7 @@ class KDE(object):
         s[500:,1] = s[500:,1] - 0.5
         self.samples = s
 
-        self.KDEtypes = 'triangular'
+        self.KDEtypes = 'gaussian'
         self.bandwidths = 0.3
         self.run_estimator()
 
@@ -63,6 +63,9 @@ class KDE(object):
         pl.show()
 
     def run_estimator(self):
+
+        assert self.samples.shape[0]>self.samples.shape[1], \
+            '\nMore dimensions than samples'
 
         # declarations
         Nsamp = np.int64(self.samples.shape[0])
